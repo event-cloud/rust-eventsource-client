@@ -187,7 +187,13 @@ impl ClientBuilder {
     #[cfg(feature = "rustls")]
     /// Build with an HTTPS client connector, using the OS root certificate store.
     pub fn build(self) -> impl Client {
-        let conn = HttpsConnector::with_native_roots();
+        use hyper_rustls::HttpsConnectorBuilder;
+
+        let conn = HttpsConnectorBuilder::new()
+            .with_native_roots()
+            .https_or_http()
+            .enable_http1()
+            .build();
         self.build_with_conn(conn)
     }
 
